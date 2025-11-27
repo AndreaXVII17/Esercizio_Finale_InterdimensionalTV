@@ -20,6 +20,7 @@ const Home = () => {
         <div className="hero-caption">
           <img src={hero_title} alt="" className="caption-img" />
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae tempora sint dignissimos?</p>
+          <p>lorem65</p>
 
           <div className="hero-btns">
             <button className="btn"><img src={play_icon}alt="" />Play</button>
@@ -33,10 +34,10 @@ const Home = () => {
 
     <div className="more-cards">
 
-      <TitleCards title={"Blockbuster"}/>
-      <TitleCards title={"Only on netflix"}/>
-      <TitleCards title={"in arrivo "}/>
-      <TitleCards title={"for you"}/>
+      <TitleCards title={"Blockbuster"} category={"top_rated"}/>
+      <TitleCards title={"Only on netflix"} category={"popular"}/>
+      <TitleCards title={"in arrivo "} category={"upcoming"}/>
+      <TitleCards title={"for you"} category={"now_playing"}/>
 
     </div>
 
