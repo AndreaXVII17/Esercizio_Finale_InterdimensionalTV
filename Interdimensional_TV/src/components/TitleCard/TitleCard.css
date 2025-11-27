@@ -1,3 +1,8 @@
+.card {
+  text-decoration: none;
+  color: inherit;
+}
+
 .title-cards{
     margin-top: 5opx;
     margin-bottom: 30px;
