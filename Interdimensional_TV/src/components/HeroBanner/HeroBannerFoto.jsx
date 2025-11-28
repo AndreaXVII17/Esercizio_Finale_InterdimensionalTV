@@ -9,6 +9,9 @@ export default function HeroBannerFoto() {
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
   const [featured, setFeatured] = useState(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [trailerKey, setTrailerKey] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   async function loadRandomFeatured() {
     try {
@@ -42,6 +45,7 @@ export default function HeroBannerFoto() {
   if (!featured) return null;
 
   return (
+    <>
     <div className="hero">
 
       {/* IMMAGINE HERO */}
@@ -64,7 +68,34 @@ export default function HeroBannerFoto() {
         {/* <p>{featured.overview}</p> */}
 
         <div className="hero-btns">
-          <button className="btn">
+          <button
+            className="btn"
+            onClick={async () => {
+              try {
+                const type = featured.media_type === "tv" ? "tv" : "movie";
+                const res = await fetch(
+                  `https://api.themoviedb.org/3/${type}/${featured.id}/videos?api_key=${API_KEY}&language=it-IT`
+                );
+                const data = await res.json();
+                // Prefer trailer hosted on YouTube
+                const trailer =
+                  data.results.find(
+                    (v) => v.type === "Trailer" && v.site === "YouTube"
+                  ) || data.results[0];
+                if (trailer && trailer.key) {
+                  setTrailerKey(trailer.key);
+                  setShowTrailer(true);
+                  setNotification(null);
+                } else {
+                  // show temporary toast instead of blocking alert
+                  setNotification("Trailer non disponibile per questo titolo");
+                  setTimeout(() => setNotification(null), 3000);
+                }
+              } catch (err) {
+                console.error("Errore fetching trailer:", err);
+              }
+            }}
+          >
             <img src={play_icon} alt="" />
             Play
           </button>
@@ -79,5 +110,35 @@ export default function HeroBannerFoto() {
         </div>
       </div>
     </div>
+    {/* Trailer Modal */}
+    {showTrailer && (
+      <div className="hero-trailer-overlay" onClick={() => { setShowTrailer(false); setTrailerKey(null); }}>
+        <div className="hero-trailer-content" onClick={(e) => e.stopPropagation()}>
+          <button aria-label="Chiudi trailer" className="hero-trailer-close" onClick={() => { setShowTrailer(false); setTrailerKey(null); }}>
+            ✕
+          </button>
+
+          {trailerKey ? (
+            <iframe
+              title="Trailer"
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&rel=0`}
+              className="hero-trailer-iframe"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          ) : (
+            <div style={{ color: "#fff", padding: 20 }}>Trailer non disponibile</div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {notification && (
+      <div role="status" aria-live="polite" className="hero-notification">
+        <div className="hero-notification-dot" />
+        <div className="hero-notification-message">{notification}</div>
+      </div>
+    )}
+    </>
   );
 }

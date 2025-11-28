@@ -18,6 +18,14 @@ const TVRow = ({ title, category, linkTo = "/tv" }) => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
+  // updater available to scroll handlers and programmatic scroll
+  const updateButtons = () => {
+    const el = rowRef.current;
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,20 +42,18 @@ const TVRow = ({ title, category, linkTo = "/tv" }) => {
 
     fetchData();
 
+    // set up listeners after mount; actual visibility computed when items load
     const el = rowRef.current;
-    const updateButtons = () => {
-      if (!el) return;
-      setShowLeft(el.scrollLeft > 0);
-      setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-    };
-
-    el && el.addEventListener('scroll', updateButtons, { passive: true });
+    if (el) {
+      el.addEventListener('scroll', updateButtons, { passive: true });
+    }
     window.addEventListener('resize', updateButtons);
-    setTimeout(updateButtons, 50);
+    const t = setTimeout(updateButtons, 100);
 
     return () => {
-      el && el.removeEventListener('scroll', updateButtons);
+      if (el) el.removeEventListener('scroll', updateButtons);
       window.removeEventListener('resize', updateButtons);
+      clearTimeout(t);
     };
   }, [category]);
 
@@ -56,6 +62,9 @@ const TVRow = ({ title, category, linkTo = "/tv" }) => {
     if (!el) return;
     const amount = el.clientWidth;
     el.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    // update buttons immediately and again after smooth scroll finishes
+    updateButtons();
+    setTimeout(updateButtons, 250);
   };
 
   return (

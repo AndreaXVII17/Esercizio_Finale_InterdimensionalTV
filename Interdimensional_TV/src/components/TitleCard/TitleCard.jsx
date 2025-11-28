@@ -28,7 +28,7 @@ const TitleCards = ({ title, category }) => {
   };
 
   useEffect(() => {
-    // API: versione italiana + fallback now_playing
+    // Fetch API in italiano
     fetch(
       `https://api.themoviedb.org/3/movie/${category ?? "now_playing"}?language=it-IT&page=1`,
       options
@@ -37,20 +37,23 @@ const TitleCards = ({ title, category }) => {
       .then((res) => setApiData(res.results))
       .catch((err) => console.error(err));
 
-    // Scorrimento + pulsanti
     const el = cardsRef.current;
+
     const updateButtons = () => {
       if (!el) return;
       setShowLeft(el.scrollLeft > 0);
       setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
     };
 
+    // Eventi scroll + resize
     el && el.addEventListener("scroll", updateButtons, { passive: true });
     window.addEventListener("resize", updateButtons);
-    setTimeout(updateButtons, 50);
 
-    // Scorrimento col mouse
+    // Eventi wheel per scroll orizzontale
     el && el.addEventListener("wheel", handleWheel);
+
+    // Aggiorna pulsanti dopo layout
+    setTimeout(updateButtons, 50);
 
     return () => {
       el && el.removeEventListener("scroll", updateButtons);
@@ -59,6 +62,7 @@ const TitleCards = ({ title, category }) => {
     };
   }, [category]);
 
+  // Scroll orizzontale per intera "pagina"
   const scrollByPage = (dir = 1) => {
     const el = cardsRef.current;
     if (!el) return;

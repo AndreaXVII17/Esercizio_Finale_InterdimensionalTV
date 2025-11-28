@@ -31,7 +31,8 @@ const Navbar = () => {
 
       {/* LEFT */}
       <div className="navbar-left">
-        {/* LOGO → naviga alla home */}
+
+        {/* LOGO → Home */}
         <img
           src={logo}
           alt="logo"
@@ -48,10 +49,10 @@ const Navbar = () => {
           <li onClick={() => navigate('/')} role="button">Home</li>
 
           <li
-            onClick={() => navigate('/series')}
+            onClick={() => navigate('/serietv')}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/series'); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/serietv'); }}
           >
             Serie TV
           </li>
