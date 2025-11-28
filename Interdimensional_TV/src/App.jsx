@@ -1,6 +1,5 @@
-import './App.css';
+import "./App.css";
 import React from "react";
-
 import { Routes, Route } from "react-router-dom";
 
 // Pagine
@@ -16,30 +15,36 @@ import Detail from "./components/Details/Detail";
 // Context
 import { FavouritesProvider } from "./context/FavouritesContext";
 
+// Layout
+import Layout from "./layout";
+
 const App = () => {
   return (
     <FavouritesProvider>
       <Routes>
+        {/* Layout che contiene navbar/header ecc */}
+        <Route element={<Layout />}>
+          
+          {/* HOME */}
+          <Route path="/" element={<Home />} />
 
-        {/* HOME */}
-        <Route path="/" element={<Home />} />
+          {/* RISULTATI RICERCA */}
+          <Route path="/search" element={<SearchResults />} />
 
-        {/* RISULTATI RICERCA */}
-        <Route path="/search" element={<SearchResults />} />
+          {/* PREFERITI */}
+          <Route path="/favourites" element={<Favourites />} />
 
-        {/* PREFERITI */}
-        <Route path="/favourites" element={<Favourites />} />
+          {/* DETTAGLI FILM */}
+          <Route path="/movie/:id" element={<Detail mediaType="movie" />} />
 
-        {/* DETTAGLI FILM */}
-        <Route path="/movie/:id" element={<Detail mediaType="movie" />} />
+          {/* DETTAGLI SERIE TV */}
+          <Route path="/tv/:id" element={<Detail mediaType="tv" />} />
 
-        {/* DETTAGLI SERIE TV */}
-        <Route path="/tv/:id" element={<Detail mediaType="tv" />} />
+          {/* PAGINE CATEGORIA */}
+          <Route path="/series" element={<SerieTv />} />
+          <Route path="/movies" element={<Film />} />
 
-        {/* PAGINE CATEGORIE */}
-        <Route path="/series" element={<SerieTv />} />
-        <Route path="/movies" element={<Film />} />
-
+        </Route>
       </Routes>
     </FavouritesProvider>
   );
