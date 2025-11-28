@@ -32,19 +32,53 @@ const Navbar = () => {
 
   return (
     <div className='navbar'>
-      <div className="navbar-left">
-        <img src={logo} alt="logo" className="img"/>
 
+      {/* LEFT */}
+      <div className="navbar-left">
+
+        {/* LOGO → naviga alla home */}
+        <img
+          src={logo}
+          alt="logo"
+          className="img"
+          role="button"
+          tabIndex={0}
+          onClick={() => navigate('/')}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
+          style={{ cursor: 'pointer' }}
+        />
+
+        {/* MENU */}
         <ul>
-          <li onClick={() => navigate("/")}>Home</li>
-          <li>Serie TV</li>
-          <li>Film</li>
+          <li onClick={() => navigate('/')} role="button">Home</li>
+
+          <li
+            onClick={() => navigate('/series')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/series'); }}
+          >
+            Serie TV
+          </li>
+
+          <li
+            onClick={() => navigate('/movies')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/movies'); }}
+          >
+            Film
+          </li>
+
           <li>New Popular</li>
           <li>My List</li>
-          <li onClick={() => navigate("/favourites")}>Preferiti </li>
+
+          {/* Preferiti */}
+          <li onClick={() => navigate("/favourites")}>Preferiti</li>
         </ul>
       </div>
 
+      {/* RIGHT */}
       <div className="navbar-right">
 
         {/* 🔍 MOSTRA LA SEARCHBAR SOLO SE NON SIAMO SU /search */}
@@ -76,16 +110,19 @@ const Navbar = () => {
         )}
 
         <p>Children</p>
-        <img src={bell_icon} alt="" className='icons' />
+        <img src={bell_icon} alt="Notifiche" className='icons' />
 
         <div className="navbar-profile">
-          <img src={profile_img} alt="" className='profile' />
-          <img src={caret_icon} alt="" />
+          <img src={profile_img} alt="Profilo" className='profile' />
+          <img src={caret_icon} alt="Apri menu" />
+
           <div className="dropdown">
             <p>Sign Out</p>
           </div>
         </div>
+
       </div>
+
     </div>
   );
 };

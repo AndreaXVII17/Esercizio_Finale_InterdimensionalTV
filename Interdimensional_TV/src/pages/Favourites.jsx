@@ -1,8 +1,18 @@
 import { useContext } from "react";
 import { FavouritesContext } from "../context/FavouritesContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Favourites() {
   const { favourites, removeFavourite } = useContext(FavouritesContext);
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1); // torna alla pagina precedente
+    } else {
+      navigate("/"); // se non esiste history → torna alla home
+    }
+  };
 
   return (
     <div
@@ -12,24 +22,26 @@ export default function Favourites() {
         minHeight: "100vh",
         color: "white",
         position: "relative",
+        paddingTop: "120px", // se vuoi allineamento con navbar
       }}
     >
-      {/* 🔙 Back */}
-      <button
-        onClick={() => window.history.back()}
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 20,
-          background: "none",
-          border: "none",
-          color: "white",
-          fontSize: "25px",
-          cursor: "pointer",
-        }}
-      >
-        ←
-      </button>
+<button
+  onClick={handleBack}
+  style={{
+    position: "fixed",   // 👈 FISSO, NON ASSOLUTO
+    top: "90px",         // 👈 SOTTO LA NAVBAR
+    left: "20px",
+    zIndex: 900,         // 👈 DAVANTI A TUTTO
+    background: "none",
+    border: "none",
+    color: "white",
+    fontSize: "30px",
+    cursor: "pointer",
+  }}
+>
+  ←
+</button>
+
 
       {/* 🎬 TITOLO STILE NETFLIX */}
       <h1
@@ -43,7 +55,7 @@ export default function Favourites() {
         La tua lista
       </h1>
 
-      {/* ⭐ CONTATORE A DESTRA – stile Netflix */}
+      {/* ⭐ CONTATORE A DESTRA */}
       <div
         style={{
           position: "absolute",
@@ -58,7 +70,6 @@ export default function Favourites() {
           border: "1px solid rgba(255,255,255,0.2)",
         }}
       >
-        {/* ❤️ cuore nero + perimetro bianco */}
         <svg
           viewBox="0 0 24 24"
           width="18"
@@ -75,7 +86,6 @@ export default function Favourites() {
                    22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z" />
         </svg>
 
-        {/* Numero preferiti */}
         <span
           style={{
             fontSize: "16px",

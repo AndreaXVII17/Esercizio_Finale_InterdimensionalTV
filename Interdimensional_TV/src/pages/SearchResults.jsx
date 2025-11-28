@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { FavouritesContext } from "../context/FavouritesContext";
 import BackButton from "../components/BackButton/BackButton";
 
-
 const BASE_URL = "https://api.themoviedb.org/3";
-
 
 const options = {
   method: "GET",
@@ -16,31 +15,25 @@ const options = {
   },
 };
 
-
 export default function SearchResults() {
   const { addFavourite, removeFavourite, isFavourite } =
     useContext(FavouritesContext);
 
-
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const queryParam = new URLSearchParams(location.search).get("query") || "";
   const [query, setQuery] = useState(queryParam);
-
 
   const [movies, setMovies] = useState([]);
   const [tvShows, setTvShows] = useState([]);
   const [suggestion, setSuggestion] = useState(null);
   const [loading, setLoading] = useState(false);
 
-
   // aggiorna URL live
   useEffect(() => {
     navigate(`/search?query=${encodeURIComponent(query)}`, { replace: true });
   }, [query]);
-
 
   // ricerca API
   useEffect(() => {
@@ -51,31 +44,27 @@ export default function SearchResults() {
       return;
     }
 
-
     const fetchResults = async () => {
       setLoading(true);
       try {
-        // Film
+        // film
         const movieRes = await fetch(
           `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=it-IT`,
           options
         );
         const movieData = await movieRes.json();
 
-
-        // Serie TV
+        // serie tv
         const tvRes = await fetch(
           `${BASE_URL}/search/tv?query=${encodeURIComponent(query)}&language=it-IT`,
           options
         );
         const tvData = await tvRes.json();
 
-
         setMovies(movieData.results || []);
         setTvShows(tvData.results || []);
 
-
-        // suggerimento se non trova nulla
+        // suggerimento se vuoto
         if (
           movieData.results?.length === 0 &&
           tvData.results?.length === 0
@@ -86,7 +75,6 @@ export default function SearchResults() {
             options
           );
           const suggestData = await suggestRes.json();
-
 
           if (suggestData.results.length > 0) {
             setSuggestion(suggestData.results[0]);
@@ -101,11 +89,9 @@ export default function SearchResults() {
       }
     };
 
-
     const timeout = setTimeout(fetchResults, 300);
     return () => clearTimeout(timeout);
   }, [query]);
-
 
   return (
     <div
@@ -113,13 +99,12 @@ export default function SearchResults() {
         backgroundColor: "#111",
         minHeight: "100vh",
         padding: "40px",
-        paddingTop: "100px",   // ⬅️ AGGIUNTO PER FAR PARTIRE LA PAGINA PIÙ IN GIÙ
+        paddingTop: "100px",
         color: "white",
       }}
     >
-      {/*  Torna Indietro */}
+      {/* Torna Indietro */}
       <BackButton />
-
 
       {/* Barra di ricerca */}
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -142,34 +127,29 @@ export default function SearchResults() {
         />
       </div>
 
-
-      {/* caricamento */}
+      {/* Loading */}
       {loading && (
         <p style={{ textAlign: "center", color: "#bbb" }}>Caricamento...</p>
       )}
 
-
-      {/* nessun risultato */}
+      {/* Nessun risultato */}
       {!loading && movies.length === 0 && tvShows.length === 0 && query && (
         <div style={{ textAlign: "center", fontSize: "20px" }}>
           Nessun titolo trovato
         </div>
       )}
 
-
-      {/* suggerimento */}
+      {/* Suggerimento */}
       {!loading && suggestion && (
         <div style={{ textAlign: "center", color: "#ff3c3c" }}>
           Forse cercavi: <strong>{suggestion.title}</strong>
         </div>
       )}
 
-
-      {/* 🎬 FILM */}
+      {/* FILM */}
       {movies.length > 0 && (
         <section style={{ marginTop: "40px" }}>
           <h2> Film trovati</h2>
-
 
           <div
             style={{
@@ -190,7 +170,6 @@ export default function SearchResults() {
                   style={{ width: "100%", borderRadius: "8px" }}
                 />
 
-
                 <button
                   className="fav-circle"
                   onClick={() =>
@@ -200,16 +179,17 @@ export default function SearchResults() {
                   }
                 >
                   <svg
-                    className={`heart-svg ${isFavourite(movie.id) ? "active" : ""}`}
+                    className={`heart-svg ${
+                      isFavourite(movie.id) ? "active" : ""
+                    }`}
                     viewBox="0 0 24 24"
                   >
-                    <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                      2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                      C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42
-                      22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z"/>
+                    <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                             2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                             C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 
+                             22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z"/>
                   </svg>
                 </button>
-
 
                 <p style={{ textAlign: "center", marginTop: "8px" }}>
                   {movie.title}
@@ -220,12 +200,10 @@ export default function SearchResults() {
         </section>
       )}
 
-
       {/* SERIE TV */}
       {tvShows.length > 0 && (
         <section style={{ marginTop: "40px" }}>
-          <h2>Serie TV trovate</h2>
-
+          <h2> Serie TV trovate</h2>
 
           <div
             style={{
@@ -245,7 +223,6 @@ export default function SearchResults() {
                   alt={tv.name}
                   style={{ width: "100%", borderRadius: "8px" }}
                 />
-
 
                 <p style={{ textAlign: "center", marginTop: "8px" }}>
                   {tv.name}
