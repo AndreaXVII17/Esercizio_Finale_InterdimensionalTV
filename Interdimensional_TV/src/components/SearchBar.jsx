@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SearchBar.css";
+import Navbar from "./Navbar/NavBar";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -14,16 +15,19 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="searchbar-container">
-      <input
-        type="text"
-        className="searchbar-input"
-        placeholder="Cerca film o serie TV..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-    </div>
+    <>
+      <Navbar />
+      <div className="searchbar-container">
+        <input
+          type="text"
+          className="searchbar-input"
+          placeholder="Cerca film o serie TV..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+    </>
   );
 };
 
