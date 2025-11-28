@@ -1,0 +1,104 @@
+/* ---- CARD BASE ---- */
+
+.movie-card {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.movie-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.movie-title {
+  text-align: center;
+  color: white;
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+/* ---- CERCHIETTO DEL CUORE ---- */
+
+.fav-circle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.25);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.fav-circle:hover {
+  transform: scale(1.12);
+}
+
+/* Stato attivo */
+.fav-circle.active {
+  background: white;
+  border-color: white;
+  transform: scale(1.1);
+}
+
+/* ---- CUORE CUSTOM IN CSS ---- */
+/* Forma base outline */
+.heart-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  transform: rotate(-45deg);
+  transition: 0.25s ease;
+}
+
+.heart-icon::before,
+.heart-icon::after {
+  content: "";
+  position: absolute;
+  width: 11px;
+  height: 17px;
+  border-radius: 10px 10px 0 0;
+  border: 2px solid white;
+  border-bottom: none;
+  background: transparent;
+}
+
+.heart-icon::before {
+  left: 0;
+}
+
+.heart-icon::after {
+  left: 9px;
+}
+
+/* CUORE PIENO (quando attivo) */
+.filled::before,
+.filled::after {
+  background: #e50914;
+  border-color: #e50914;
+}
+
+/* Glow morbido */
+.filled {
+  filter: drop-shadow(0 0 3px rgba(229, 9, 20, 0.5));
+}
