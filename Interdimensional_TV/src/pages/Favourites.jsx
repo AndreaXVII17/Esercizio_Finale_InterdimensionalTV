@@ -142,7 +142,7 @@ export default function Favourites() {
               {item.title || item.name}
             </p>
 
-            {/* ❌ bottone rimuovi */}
+            {/*  bottone rimuovi */}
             <button
               onClick={() => removeFavourite(item.id)}
               style={{

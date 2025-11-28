@@ -56,7 +56,7 @@ const TitleCards = ({ title, category }) => {
                 alt={card.title}
               />
 
-              {/* ❤️ bottone preferiti con svg */}
+              {/*  bottone preferiti con svg */}
               <button
                 className="fav-circle"
                 onClick={() =>

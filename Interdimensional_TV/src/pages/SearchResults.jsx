@@ -224,26 +224,7 @@ export default function SearchResults() {
                   style={{ width: "100%", borderRadius: "8px" }}
                 />
 
-                {/* ❤️ CUORE */}
-                <button
-                  onClick={() =>
-                    isFavourite(tv.id)
-                      ? removeFavourite(tv.id)
-                      : addFavourite(tv)
-                  }
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    background: "none",
-                    border: "none",
-                    fontSize: "26px",
-                    cursor: "pointer",
-                    color: isFavourite(tv.id) ? "red" : "white",
-                  }}
-                >
-                  {isFavourite(tv.id) ? "❤️" : "🤍"}
-                </button>
+              
 
                 <p style={{ textAlign: "center", marginTop: "8px" }}>
                   {tv.name}

@@ -25,7 +25,7 @@ export default function MovieCard({ movie }) {
         alt={movie.title || movie.name}
       />
 
-      {/* ❤️ bottone preferiti con cuore SVG */}
+      {/*  bottone preferiti con cuore SVG */}
       <button
         className="fav-circle"
         onClick={() =>
