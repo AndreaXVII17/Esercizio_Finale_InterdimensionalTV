@@ -1,18 +1,32 @@
 import './App.css';
 import React from 'react';
+
+// Le tue pagine
 import Home from './pages/Home/Home';
 import Detail from './components/Details/Detail';
+import SearchResults from "./pages/SearchResults.jsx";
+
 import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
   return (
-    <Routes>
+    <div>
+      <Routes>
 
-      <Route path='/' element={<Home />} />
-      <Route path='/movie/:id' element={<Detail mediaType="movie" />} />
-      <Route path='/tv/:id' element={<Detail mediaType="tv" />} />
+        {/* HOME */}
+        <Route path='/' element={<Home />} />
 
-    </Routes>
+        {/* DETTAGLI FILM */}
+        <Route path='/movie/:id' element={<Detail mediaType="movie" />} />
+
+        {/* DETTAGLI SERIE TV */}
+        <Route path='/tv/:id' element={<Detail mediaType="tv" />} />
+
+        {/* PAGINA RISULTATI RICERCA */}
+        <Route path='/search' element={<SearchResults />} />
+
+      </Routes>
+    </div>
   );
 };
 
