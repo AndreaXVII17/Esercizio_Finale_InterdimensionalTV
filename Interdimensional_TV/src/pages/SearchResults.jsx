@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FavouritesContext } from "../context/FavouritesContext";
+import BackButton from "../components/BackButton/BackButton";
+
 
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -8,27 +11,31 @@ const options = {
   headers: {
     accept: "application/json",
     Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YjZjNTMyZmI2NDFkNjM3NTgzZGZmNjZjNjdmMTM4NCIsIm5iZiI6MTc2Mjc4NTc4Ni44NzUsInN1YiI6IjY5MTFmOWZhZmUwOGI2NzcyNmEwY2YzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bYx1ffbNPqHam0JWdpJcYy9moHha62AY0MjVgeX5nn8"
-  }
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YjZjNTMyZmI2NDFkNjM3NTgzZGZmNjZjNjdmMTM4NCIsIm5iZiI6MTc2Mjc4NTc4Ni44NzUsInN1YiI6IjY5MTFmOWZhZmUwOGI2NzcyNmEwY2YzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bYx1ffbNPqHam0JWdpJcYy9moHha62AY0MjVgeX5nn8",
+  },
 };
 
 export default function SearchResults() {
+  const { addFavourite, removeFavourite, isFavourite } =
+    useContext(FavouritesContext);
+
   const location = useLocation();
   const navigate = useNavigate();
-  const queryParam = new URLSearchParams(location.search).get("query") || "";
 
+  const queryParam = new URLSearchParams(location.search).get("query") || "";
   const [query, setQuery] = useState(queryParam);
+
   const [movies, setMovies] = useState([]);
   const [tvShows, setTvShows] = useState([]);
   const [suggestion, setSuggestion] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Aggiorna URL
+  // aggiorna URL live
   useEffect(() => {
     navigate(`/search?query=${encodeURIComponent(query)}`, { replace: true });
   }, [query]);
 
-  // Ricerca
+  // ricerca API
   useEffect(() => {
     if (!query) {
       setMovies([]);
@@ -39,16 +46,15 @@ export default function SearchResults() {
 
     const fetchResults = async () => {
       setLoading(true);
-
       try {
-        // 🎬 FILM
+        // Film
         const movieRes = await fetch(
           `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}&language=it-IT`,
           options
         );
         const movieData = await movieRes.json();
 
-        // 📺 SERIE TV
+        // Serie TV
         const tvRes = await fetch(
           `${BASE_URL}/search/tv?query=${encodeURIComponent(query)}&language=it-IT`,
           options
@@ -58,14 +64,16 @@ export default function SearchResults() {
         setMovies(movieData.results || []);
         setTvShows(tvData.results || []);
 
-        // Suggerimento se nessun risultato
+        // suggerimento se non trova nulla
         if (
-          (movieData.results?.length === 0) &&
-          (tvData.results?.length === 0)
+          movieData.results?.length === 0 &&
+          tvData.results?.length === 0
         ) {
           const partial = query.slice(0, 3);
           const suggestRes = await fetch(
-            `${BASE_URL}/search/movie?query=${encodeURIComponent(partial)}&language=it-IT`,
+            `${BASE_URL}/search/movie?query=${encodeURIComponent(
+              partial
+            )}&language=it-IT`,
             options
           );
           const suggestData = await suggestRes.json();
@@ -88,9 +96,18 @@ export default function SearchResults() {
   }, [query]);
 
   return (
-    <div style={{ backgroundColor: "#111", minHeight: "100vh", padding: "40px", color: "white" }}>
+    <div
+      style={{
+        backgroundColor: "#111",
+        minHeight: "100vh",
+        padding: "40px",
+        color: "white",
+      }}
+    >
+      {/* 🔙 Torna Indietro */}
+      <BackButton />
 
-      {/* Search input */}
+      {/* Barra di ricerca */}
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
         <input
           type="text"
@@ -105,55 +122,45 @@ export default function SearchResults() {
             fontSize: "18px",
             borderRadius: "8px",
             border: "none",
-            outline: "none",
             backgroundColor: "#222",
-            color: "white"
+            color: "white",
           }}
         />
       </div>
 
-      {/* Loader */}
+      {/* caricamento */}
       {loading && (
         <p style={{ textAlign: "center", color: "#bbb" }}>Caricamento...</p>
       )}
 
-      {/* Nessun risultato */}
+      {/* nessun risultato */}
       {!loading && movies.length === 0 && tvShows.length === 0 && query && (
         <div style={{ textAlign: "center", fontSize: "20px" }}>
-          Nessun titolo trovato 😢
+          Nessun titolo trovato 
         </div>
       )}
 
-      {/* Suggerimento */}
+      {/* suggerimento */}
       {!loading && suggestion && (
-        <div style={{ textAlign: "center", fontSize: "18px", color: "#ff3c3c" }}>
+        <div style={{ textAlign: "center", color: "#ff3c3c" }}>
           Forse cercavi: <strong>{suggestion.title}</strong>
         </div>
       )}
 
-      {/* 🎬 Sezione Film */}
+      {/* 🎬 FILM */}
       {movies.length > 0 && (
-        <div style={{ marginTop: "40px" }}>
-          <h2 style={{ marginBottom: "10px" }}>🎬 Film trovati</h2>
+        <section style={{ marginTop: "40px" }}>
+          <h2> Film trovati</h2>
+
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-              gap: "20px"
+              gap: "20px",
             }}
           >
             {movies.map((movie) => (
-              <div
-                key={movie.id}
-                style={{
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  transition: "transform 0.3s"
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
+              <div key={movie.id} style={{ position: "relative" }}>
                 <img
                   src={
                     movie.poster_path
@@ -161,40 +168,52 @@ export default function SearchResults() {
                       : "https://via.placeholder.com/300x450?text=Nessuna+Immagine"
                   }
                   alt={movie.title}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", borderRadius: "8px" }}
                 />
+
+               <button
+  className="fav-circle"
+  onClick={() =>
+    isFavourite(movie.id)
+      ? removeFavourite(movie.id)
+      : addFavourite(movie)
+  }
+>
+  <svg
+    className={`heart-svg ${isFavourite(movie.id) ? "active" : ""}`}
+    viewBox="0 0 24 24"
+  >
+    <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+             2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+             C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 
+             22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z"/>
+  </svg>
+</button>
+
+
                 <p style={{ textAlign: "center", marginTop: "8px" }}>
                   {movie.title}
                 </p>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* 📺 Sezione Serie TV */}
+      {/* 📺 SERIE TV */}
       {tvShows.length > 0 && (
-        <div style={{ marginTop: "40px" }}>
-          <h2 style={{ marginBottom: "10px" }}>📺 Serie TV trovate</h2>
+        <section style={{ marginTop: "40px" }}>
+          <h2>📺 Serie TV trovate</h2>
+
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-              gap: "20px"
+              gap: "20px",
             }}
           >
             {tvShows.map((tv) => (
-              <div
-                key={tv.id}
-                style={{
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  transition: "transform 0.3s"
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
+              <div key={tv.id} style={{ position: "relative" }}>
                 <img
                   src={
                     tv.poster_path
@@ -202,15 +221,37 @@ export default function SearchResults() {
                       : "https://via.placeholder.com/300x450?text=Nessuna+Immagine"
                   }
                   alt={tv.name}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", borderRadius: "8px" }}
                 />
+
+                {/* ❤️ CUORE */}
+                <button
+                  onClick={() =>
+                    isFavourite(tv.id)
+                      ? removeFavourite(tv.id)
+                      : addFavourite(tv)
+                  }
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    background: "none",
+                    border: "none",
+                    fontSize: "26px",
+                    cursor: "pointer",
+                    color: isFavourite(tv.id) ? "red" : "white",
+                  }}
+                >
+                  {isFavourite(tv.id) ? "❤️" : "🤍"}
+                </button>
+
                 <p style={{ textAlign: "center", marginTop: "8px" }}>
                   {tv.name}
                 </p>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
