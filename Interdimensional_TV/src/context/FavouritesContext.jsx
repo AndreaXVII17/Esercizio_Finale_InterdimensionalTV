@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 
 export const FavouritesContext = createContext();
 
@@ -44,3 +44,9 @@ export const FavouritesProvider = ({ children }) => {
     </FavouritesContext.Provider>
   );
 };
+
+// convenience hook for consumers
+export const useFavourites = () => useContext(FavouritesContext);
+
+// also provide a default export (the context object) to avoid import mismatches
+export default FavouritesContext;

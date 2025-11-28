@@ -3,7 +3,10 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import "./Detail.css";
 import actorPlaceholder from '../../assets/actor-placeholder.svg';
 import backdropPlaceholder from '../../assets/backdrop-placeholder.svg';
-import NavBar from '../Navbar/NavBar';
+// NavBar is provided by Layout
+import BackButton from "../BackButton/BackButton";
+import { useFavourites } from '../../context/FavouritesContext';
+
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -19,6 +22,7 @@ export default function Detail({ mediaType }) {
   const [ratedMovies, setRatedMovies] = useState([]);
   const [userRating, setUserRating] = useState(null);
   const [ratings, setRatings] = useState(null);
+  const { favourites, addFavourite, removeFavourite } = useFavourites();
 
     const castRef = useRef(null);
     const similarRef = useRef(null);
@@ -205,6 +209,27 @@ export default function Detail({ mediaType }) {
 
   if (!details) return <div className="detail-loading">Caricamento…</div>;
 
+  const isFavourite = Array.isArray(favourites) && favourites.some((f) => Number(f.id) === Number(id) && ((f.media_type || f.mediaType || (f.first_air_date ? 'tv' : 'movie')) === mediaType));
+
+  const handleFavouriteToggle = () => {
+    if (!details) return;
+    if (isFavourite) {
+      if (typeof removeFavourite === 'function') removeFavourite(details.id);
+    } else {
+      if (typeof addFavourite === 'function') {
+        const item = {
+          id: details.id,
+          media_type: mediaType,
+          poster_path: details.poster_path || null,
+          title: details.title || null,
+          name: details.name || null,
+          first_air_date: details.first_air_date || null,
+        };
+        addFavourite(item);
+      }
+    }
+  };
+
   const backdropUrl = details.backdrop_path
     ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
     : details.poster_path
@@ -213,8 +238,6 @@ export default function Detail({ mediaType }) {
 
   return (
     <div className="detail-page">
-      <NavBar />
-
       <div className="detail-backdrop">
         <img
           className={`detail-backdrop-img`}
@@ -226,18 +249,39 @@ export default function Detail({ mediaType }) {
           }}
         />
         <div className="backdrop-overlay" />
-
-        <button type="button" className="back-btn" onClick={() => navigate(-1)} aria-label="Torna indietro">
-          <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="12" cy="12" r="12" stroke="rgba(255,255,255,0.95)" strokeWidth="1.8" fill="rgba(0,0,0,0.36)" />
-            <path d="M13.2 8.5L10 11.7l3.2 3.2" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        <BackButton />
       </div>
 
       <div className="detail-header">
         <h1 className="detail-title">{details.title || details.name}</h1>
         <div className="detail-header-right">
+          <button
+            type="button"
+            className="detail-fav-btn"
+            onClick={handleFavouriteToggle}
+            aria-pressed={isFavourite}
+            aria-label={isFavourite ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti'}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 6,
+              marginRight: 8,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {isFavourite ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.65 11.54L12 21.35z" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z" />
+              </svg>
+            )}
+          </button>
           <div className="detail-rating">{getPreferredRating() || '—'}</div>
 
           {typeof details?.vote_average === 'number' ? (

@@ -1,17 +1,16 @@
 
 import React from "react";
 import './Home.css' ;
-import Navbar from "../../components/Navbar/NavBar";
+// NavBar is provided by Layout
 import info_icon from '../../assets/info_icon.png';
 import TitleCards from "../../components/TitleCard/TitleCard";
-import Footer from "../../components/Footer/Footer";
+// Footer is provided by Layout
 import HeroBanner from "../../components/HeroBanner/HeroBanner";
 import HeroBannerFoto from "../../components/HeroBanner/HeroBannerFoto";
 
 const Home = () => {
   return (
     <div className = 'Home'>
-      <Navbar />
       <HeroBannerFoto/>
 
     <div className="more-cards">
@@ -23,7 +22,7 @@ const Home = () => {
 
     </div>
 
-    <Footer />
+    
 
     </div>
   )

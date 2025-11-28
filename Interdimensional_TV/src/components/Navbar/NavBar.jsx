@@ -5,7 +5,7 @@ import search_icon from '../../assets/search_icon.svg';
 import bell_icon from '../../assets/bell_icon.svg';
 import profile_img from '../../assets/profile_img.png';
 import caret_icon from '../../assets/caret_icon.svg';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [query, setQuery] = useState("");
@@ -46,32 +46,20 @@ const Navbar = () => {
 
         {/* MENU */}
         <ul>
-          <li onClick={() => navigate('/')} role="button">Home</li>
-
-          <li
-            onClick={() => navigate('/serietv')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/serietv'); }}
-          >
-            Serie TV
+          <li>
+            <NavLink to="/home" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
           </li>
-
-          <li
-            onClick={() => navigate('/movies')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/movies'); }}
-          >
-            Film
+          <li>
+            <NavLink to="/serietv" className={({ isActive }) => isActive ? 'active' : ''}>Serie TV</NavLink>
           </li>
-
-          <li>New Popular</li>
-          <li>My List</li>
-
-          {/* Preferiti */}
-          <li onClick={() => navigate("/favourites")}>Preferiti</li>
+          <li>
+            <NavLink to="/movies" className={({ isActive }) => isActive ? 'active' : ''}>Film</NavLink>
+          </li>
+          <li>
+            <NavLink to="/favourites" className={({ isActive }) => isActive ? 'active' : ''}>Preferiti</NavLink>
+          </li>
         </ul>
+
       </div>
 
       {/* RIGHT */}
@@ -85,13 +73,7 @@ const Navbar = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              border: "none",
-              outline: "none",
-              width: "200px"
-            }}
+            className="search-input"
           />
 
           <img
@@ -99,11 +81,9 @@ const Navbar = () => {
             alt="Cerca"
             className='icons'
             onClick={handleSearchClick}
-            style={{ cursor: "pointer", marginLeft: "8px" }}
           />
         </div>
 
-        <p>Children</p>
         <img src={bell_icon} alt="Notifiche" className='icons' />
 
         <div className="navbar-profile">

@@ -22,9 +22,16 @@ const TitleCards = ({ title, category }) => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
-  const handleWheel = (event) => {
-    event.preventDefault();
-    cardsRef.current.scrollLeft += event.deltaY;
+  // NOTE: wheel-based horizontal scrolling removed per UX request.
+
+  // updateButtons uses the current `cardsRef` element to decide whether
+  // to show the left/right scroll buttons. Defined here so it can be
+  // called after API data loads and from listeners.
+  const updateButtons = () => {
+    const el = cardsRef.current;
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   };
 
   useEffect(() => {
@@ -39,28 +46,23 @@ const TitleCards = ({ title, category }) => {
 
     const el = cardsRef.current;
 
-    const updateButtons = () => {
-      if (!el) return;
-      setShowLeft(el.scrollLeft > 0);
-      setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-    };
-
     // Eventi scroll + resize
     el && el.addEventListener("scroll", updateButtons, { passive: true });
     window.addEventListener("resize", updateButtons);
-
-    // Eventi wheel per scroll orizzontale
-    el && el.addEventListener("wheel", handleWheel);
 
     // Aggiorna pulsanti dopo layout
     setTimeout(updateButtons, 50);
 
     return () => {
       el && el.removeEventListener("scroll", updateButtons);
-      el && el.removeEventListener("wheel", handleWheel);
       window.removeEventListener("resize", updateButtons);
     };
   }, [category]);
+
+  // Ensure buttons are updated when cards are rendered/changed
+  useEffect(() => {
+    setTimeout(updateButtons, 50);
+  }, [apiData]);
 
   // Scroll orizzontale per intera "pagina"
   const scrollByPage = (dir = 1) => {

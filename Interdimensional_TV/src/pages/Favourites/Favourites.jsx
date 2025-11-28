@@ -1,13 +1,17 @@
 import { useFavorites } from "../../context/FavoritesContext";
 import { Link } from "react-router-dom";
 import "./Favorites.css";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function Favorites() {
   const { favorites } = useFavorites();
 
   return (
     <div className="favorites-page">
-      <h1>I tuoi Preferiti</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <BackButton />
+        <h1 style={{ margin: 0 }}>I tuoi Preferiti</h1>
+      </div>
 
       <div className="favorites-grid">
         {favorites.length === 0 ? (

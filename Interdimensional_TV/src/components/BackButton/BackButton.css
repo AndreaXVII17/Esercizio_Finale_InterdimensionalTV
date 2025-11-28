@@ -16,3 +16,39 @@
   color: #e50914;
   transform: translateX(-3px);
 }
+
+/* New styles for icon back button */
+.backdrop-overlay{
+  position: absolute;
+  left: 0;
+  top: 120px; /* place overlay below navbar — adjusted */
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+.back-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn img{
+  display: block;
+}
+
+/* Ensure the button sits above the fixed navbar and is visible */
+.back-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1201;
+  margin-right: 12px;
+  margin-bottom: 0;
+  align-self: center;
+}
+
+.backdrop-overlay{
+  z-index: 1200;
+}

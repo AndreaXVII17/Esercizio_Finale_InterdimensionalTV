@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SearchBar.css";
-import Navbar from "./Navbar/NavBar";
+// NavBar is provided by Layout
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -16,7 +16,6 @@ const SearchBar = () => {
 
   return (
     <>
-      <Navbar />
       <div className="searchbar-container">
         <input
           type="text"

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { FavouritesContext } from "../context/FavouritesContext";
 import BackButton from "../components/BackButton/BackButton";
-import Navbar from "../components/Navbar/NavBar";
+// NavBar is provided by Layout
 
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -96,8 +96,6 @@ export default function SearchResults() {
 
   return (
     <>
-      <Navbar />
-
       <div
         style={{
           backgroundColor: "#111",

@@ -1,5 +1,6 @@
 .favorites-page {
   padding: 40px 6%;
+  padding-top: 120px; /* ensure content (back button/title) sits below the fixed navbar */
   color: white;
 }
 
