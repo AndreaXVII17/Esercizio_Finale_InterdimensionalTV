@@ -117,7 +117,7 @@ export default function SearchResults() {
         color: "white",
       }}
     >
-      {/* 🔙 Torna Indietro */}
+      {/*  Torna Indietro */}
       <BackButton />
 
 
@@ -221,10 +221,10 @@ export default function SearchResults() {
       )}
 
 
-      {/* 📺 SERIE TV */}
+      {/* SERIE TV */}
       {tvShows.length > 0 && (
         <section style={{ marginTop: "40px" }}>
-          <h2>📺 Serie TV trovate</h2>
+          <h2>Serie TV trovate</h2>
 
 
           <div
