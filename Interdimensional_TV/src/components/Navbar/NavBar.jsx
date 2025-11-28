@@ -5,11 +5,15 @@ import search_icon from '../../assets/search_icon.svg';
 import bell_icon from '../../assets/bell_icon.svg';
 import profile_img from '../../assets/profile_img.png';
 import caret_icon from '../../assets/caret_icon.svg';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // siamo nella pagina /search ?
+  const isSearchPage = location.pathname === "/search";
 
   const handleSearchClick = () => {
     if (query.trim()) {
@@ -37,37 +41,39 @@ const Navbar = () => {
           <li>Film</li>
           <li>New Popular</li>
           <li>My List</li>
-
-          {/* 👉 AGGIUNTA QUI — Link ai preferiti */}
           <li onClick={() => navigate("/favourites")}>Preferiti </li>
         </ul>
       </div>
 
       <div className="navbar-right">
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Cerca film o serie TV..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              border: "none",
-              outline: "none",
-              width: "200px"
-            }}
-          />
 
-          <img
-            src={search_icon}
-            alt="Cerca"
-            className='icons'
-            onClick={handleSearchClick}
-            style={{ cursor: "pointer", marginLeft: "8px" }}
-          />
-        </div>
+        {/* 🔍 MOSTRA LA SEARCHBAR SOLO SE NON SIAMO SU /search */}
+        {!isSearchPage && (
+          <div className="search-wrapper">
+            <input
+              type="text"
+              placeholder="Cerca film o serie TV..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              style={{
+                padding: "8px",
+                borderRadius: "4px",
+                border: "none",
+                outline: "none",
+                width: "200px"
+              }}
+            />
+
+            <img
+              src={search_icon}
+              alt="Cerca"
+              className='icons'
+              onClick={handleSearchClick}
+              style={{ cursor: "pointer", marginLeft: "8px" }}
+            />
+          </div>
+        )}
 
         <p>Children</p>
         <img src={bell_icon} alt="" className='icons' />
