@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import "./TitleCard.css";
 import { FavouritesContext } from "../../context/FavouritesContext";
+import { Link } from "react-router-dom";
 
 const TitleCards = ({ title, category }) => {
   const [apiData, setApiData] = useState([]);
@@ -18,12 +19,16 @@ const TitleCards = ({ title, category }) => {
     },
   };
 
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+
   const handleWheel = (event) => {
     event.preventDefault();
     cardsRef.current.scrollLeft += event.deltaY;
   };
 
   useEffect(() => {
+    // API: versione italiana + fallback now_playing
     fetch(
       `https://api.themoviedb.org/3/movie/${category ?? "now_playing"}?language=it-IT&page=1`,
       options
@@ -32,52 +37,100 @@ const TitleCards = ({ title, category }) => {
       .then((res) => setApiData(res.results))
       .catch((err) => console.error(err));
 
-    if (cardsRef.current) {
-      cardsRef.current.addEventListener("wheel", handleWheel);
-    }
-  }, []);
+    // Scorrimento + pulsanti
+    const el = cardsRef.current;
+    const updateButtons = () => {
+      if (!el) return;
+      setShowLeft(el.scrollLeft > 0);
+      setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    };
+
+    el && el.addEventListener("scroll", updateButtons, { passive: true });
+    window.addEventListener("resize", updateButtons);
+    setTimeout(updateButtons, 50);
+
+    // Scorrimento col mouse
+    el && el.addEventListener("wheel", handleWheel);
+
+    return () => {
+      el && el.removeEventListener("scroll", updateButtons);
+      el && el.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("resize", updateButtons);
+    };
+  }, [category]);
+
+  const scrollByPage = (dir = 1) => {
+    const el = cardsRef.current;
+    if (!el) return;
+    const amount = el.clientWidth;
+    el.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
 
   return (
     <div className="title-cards">
       <h2>{title ?? "Popular on Netflix"}</h2>
 
-      <div className="card-list" ref={cardsRef}>
-        {apiData.map((card) => {
-          const fav = isFavourite(card.id);
+      <div className="row-wrapper">
+        {showLeft && (
+          <button
+            className="scroll-btn left"
+            onClick={() => scrollByPage(-1)}
+            aria-label="Scroll left"
+          >
+            ‹
+          </button>
+        )}
 
-          return (
-            <div key={card.id} className="card">
-              <img
-                src={
-                  card.backdrop_path
-                    ? `https://image.tmdb.org/t/p/w500${card.backdrop_path}`
-                    : "https://via.placeholder.com/500x300?text=No+Image"
-                }
-                alt={card.title}
-              />
+        <div className="card-list" ref={cardsRef}>
+          {apiData.map((card) => {
+            const fav = isFavourite(card.id);
 
-              {/*  bottone preferiti con svg */}
-              <button
-                className="fav-circle"
-                onClick={() =>
-                  fav ? removeFavourite(card.id) : addFavourite(card)
-                }
-              >
-                <svg
-                  className={`heart-svg ${fav ? "active" : ""}`}
-                  viewBox="0 0 24 24"
+            return (
+              <div className="card" key={card.id}>
+                <Link to={`/movie/${card.id}`}>
+                  <img
+                    src={
+                      card.backdrop_path
+                        ? `https://image.tmdb.org/t/p/w500${card.backdrop_path}`
+                        : "https://via.placeholder.com/500x300?text=No+Image"
+                    }
+                    alt={card.title || card.original_title}
+                  />
+                </Link>
+
+                {/* Preferiti */}
+                <button
+                  className="fav-circle"
+                  onClick={() =>
+                    fav ? removeFavourite(card.id) : addFavourite(card)
+                  }
                 >
-                  <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-                           2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                           C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 
-                           22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z"/>
-                </svg>
-              </button>
+                  <svg
+                    className={`heart-svg ${fav ? "active" : ""}`}
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                               2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                               C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 
+                               22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z"/>
+                  </svg>
+                </button>
 
-              <p>{card.title || card.original_title}</p>
-            </div>
-          );
-        })}
+                <p>{card.title || card.original_title}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {showRight && (
+          <button
+            className="scroll-btn right"
+            onClick={() => scrollByPage(1)}
+            aria-label="Scroll right"
+          >
+            ›
+          </button>
+        )}
       </div>
     </div>
   );

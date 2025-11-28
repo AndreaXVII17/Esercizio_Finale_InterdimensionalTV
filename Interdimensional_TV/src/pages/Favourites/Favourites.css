@@ -1,0 +1,15 @@
+.favorites-page {
+  padding: 40px 6%;
+  color: white;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px);
+  gap: 20px;
+}
+
+.fav-card img {
+  width: 200px;
+  border-radius: 10px;
+}

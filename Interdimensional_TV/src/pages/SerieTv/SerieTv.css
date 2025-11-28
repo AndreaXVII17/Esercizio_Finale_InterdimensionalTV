@@ -1,0 +1,16 @@
+.serie-container{
+  padding: 100px 40px 40px; /* lascia spazio per la navbar fissa */
+  background-color: #111;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.serie-page .title-cards h2{
+  margin-bottom: 12px;
+}
+
+/* Assicuriamoci che le card usino lo stesso stile di TitleCard.css */
+.card-list img{
+  width: 240px;
+  object-fit: cover;
+}
