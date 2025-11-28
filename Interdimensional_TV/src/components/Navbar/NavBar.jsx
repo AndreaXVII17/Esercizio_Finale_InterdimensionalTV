@@ -34,11 +34,34 @@ const Navbar = () => {
   return (
     <div className='navbar'>
       <div className="navbar-left">
-        <img src={logo} alt="logo" className="img"/>
+        <img
+          src={logo}
+          alt="logo"
+          className="img"
+          role="button"
+          tabIndex={0}
+          onClick={() => navigate('/')}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
+          style={{ cursor: 'pointer' }}
+        />
         <ul>
-          <li>Home</li>
-          <li>Serie TV</li>
-          <li>Film</li>
+          <li onClick={() => navigate('/')} role="button">Home</li>
+          <li
+            onClick={() => navigate('/series')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/series'); }}
+          >
+            Serie TV
+          </li>
+          <li
+            onClick={() => navigate('/movies')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/movies'); }}
+          >
+            Film
+          </li>
           <li>New Popular</li>
           <li>My List</li>
         </ul>

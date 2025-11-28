@@ -1,0 +1,15 @@
+.film-container{
+  padding: 100px 40px 40px; /* spazio per navbar fissa */
+  background-color: #111;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.film-page .title-cards h2{
+  margin-bottom: 12px;
+}
+
+.card-list img{
+  width: 240px;
+  object-fit: cover;
+}

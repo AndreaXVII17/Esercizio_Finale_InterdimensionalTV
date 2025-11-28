@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar/NavBar";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -88,7 +89,9 @@ export default function SearchResults() {
   }, [query]);
 
   return (
-    <div style={{ backgroundColor: "#111", minHeight: "100vh", padding: "40px", color: "white" }}>
+    <>
+      <Navbar />
+      <div style={{ backgroundColor: "#111", minHeight: "100vh", padding: "100px 40px 40px", color: "white" }}>
 
       {/* Search input */}
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -213,5 +216,6 @@ export default function SearchResults() {
         </div>
       )}
     </div>
+    </>
   );
 }

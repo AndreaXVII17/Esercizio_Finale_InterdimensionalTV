@@ -7,7 +7,7 @@
     font-size: 14px;
     color: #e5e5e5;
     background-image: linear-gradient(180deg,rgba(0,0,0,0.7) 10%, transparent);
-    z-index: 1;
+    z-index: 1000;
 }
 
 .navbar-left{
@@ -61,7 +61,7 @@
     padding: 18px 22px;
     border-radius: 2px;
     text-decoration: underline;
-    z-index:1;
+    z-index: 1001;
     display: none;
 }
 .navbar .dropdown p{

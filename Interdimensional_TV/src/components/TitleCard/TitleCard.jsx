@@ -23,10 +23,8 @@ const options = {
 
 
 
-const handleWheel = (event) => {
-  event.preventDefault();
-  cardsRef.current.scrollLeft += event.deltaY;
-}
+const [showLeft, setShowLeft] = useState(false);
+const [showRight, setShowRight] = useState(false);
 
 useEffect(()=>{
 
@@ -35,19 +33,45 @@ useEffect(()=>{
   .then(res =>setApiData(res.results))
   .catch(err => console.error(err));
 
-  cardsRef.current.addEventListener('wheel',handleWheel);
+  const el = cardsRef.current;
+  const updateButtons = () => {
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
 
-},[])
+  el && el.addEventListener('scroll', updateButtons, { passive: true });
+  window.addEventListener('resize', updateButtons);
+  setTimeout(updateButtons, 50);
+
+  return () => {
+    el && el.removeEventListener('scroll', updateButtons);
+    window.removeEventListener('resize', updateButtons);
+  };
+
+},[category])
+
+const scrollByPage = (dir = 1) => {
+  const el = cardsRef.current;
+  if (!el) return;
+  const amount = el.clientWidth;
+  el.scrollBy({ left: dir * amount, behavior: 'smooth' });
+};
 
 
   return (
     <div className = 'title-cards'>
       <h2>{title?title:"Popular on Netflix"}</h2>
 
-      <div className="card-list" ref={cardsRef}>
+      <div className="row-wrapper">
+        {showLeft && (
+          <button className="scroll-btn left" onClick={() => scrollByPage(-1)} aria-label="Scroll left">‹</button>
+        )}
 
-        {apiData.map((card, index) =>{
-         return (
+        <div className="card-list" ref={cardsRef}>
+
+          {apiData.map((card, index) =>{
+           return (
   <Link to={`/movie/${card.id}`} className="card" key={index}>
     <img src={'https://image.tmdb.org/t/p/w500' + card.backdrop_path} alt="" />
     <p>{card.original_title || card.name}</p>
@@ -57,6 +81,11 @@ useEffect(()=>{
         })} 
 
          </div>
+
+         {showRight && (
+           <button className="scroll-btn right" onClick={() => scrollByPage(1)} aria-label="Scroll right">›</button>
+         )}
+      </div>
     </div>
   )
 }

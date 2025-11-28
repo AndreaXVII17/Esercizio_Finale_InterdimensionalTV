@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import "./Detail.css";
+import actorPlaceholder from '../../assets/actor-placeholder.svg';
+import backdropPlaceholder from '../../assets/backdrop-placeholder.svg';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -12,17 +14,12 @@ export default function Detail({ mediaType }) {
   const [similar, setSimilar] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
 
-  const castRef = useRef(null);
-  const similarRef = useRef(null);
-
-// questo serve per lo scroll , uguale a titlecard 
-const handleWheel = (ref) => (event) => {
-  if (!ref.current) return;
-
-  event.preventDefault();
-  event.stopPropagation();
-  ref.current.scrollLeft += event.deltaY;  
-};
+    const castRef = useRef(null);
+    const similarRef = useRef(null);
+    const [castLeft, setCastLeft] = useState(false);
+    const [castRight, setCastRight] = useState(false);
+    const [simLeft, setSimLeft] = useState(false);
+    const [simRight, setSimRight] = useState(false);
 
 
 
@@ -60,40 +57,79 @@ const handleWheel = (ref) => (event) => {
     loadAll();
   }, [id, mediaType]);
 
-//listener per far si che scrolli solo se c'è il cursore sopra
+  // manage visibility of scroll buttons for cast and similar lists
   useEffect(() => {
     const castEl = castRef.current;
     const similarEl = similarRef.current;
 
-    if (!castEl && !similarEl) return;
+    const updateCast = () => {
+      if (!castEl) return;
+      setCastLeft(castEl.scrollLeft > 0);
+      setCastRight(castEl.scrollLeft + castEl.clientWidth < castEl.scrollWidth - 1);
+    };
 
-    const castWheel = handleWheel(castRef);
-    const similarWheel = handleWheel(similarRef);
+    const updateSim = () => {
+      if (!similarEl) return;
+      setSimLeft(similarEl.scrollLeft > 0);
+      setSimRight(similarEl.scrollLeft + similarEl.clientWidth < similarEl.scrollWidth - 1);
+    };
 
-    if (castEl)
-      castEl.addEventListener("wheel", castWheel, { passive: false });
+    if (castEl) {
+      castEl.addEventListener('scroll', updateCast, { passive: true });
+      window.addEventListener('resize', updateCast);
+      setTimeout(updateCast, 50);
+    }
 
-    if (similarEl)
-      similarEl.addEventListener("wheel", similarWheel, { passive: false });
+    if (similarEl) {
+      similarEl.addEventListener('scroll', updateSim, { passive: true });
+      window.addEventListener('resize', updateSim);
+      setTimeout(updateSim, 50);
+    }
 
     return () => {
-      if (castEl) castEl.removeEventListener("wheel", castWheel);
-      if (similarEl) similarEl.removeEventListener("wheel", similarWheel);
+      if (castEl) castEl.removeEventListener('scroll', updateCast);
+      if (similarEl) similarEl.removeEventListener('scroll', updateSim);
+      window.removeEventListener('resize', updateCast);
+      window.removeEventListener('resize', updateSim);
     };
-  }, [cast, similar]); 
+  }, [cast, similar]);
+
+  const scrollCast = (dir = 1) => {
+    const el = castRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
+
+  const scrollSim = (dir = 1) => {
+    const el = similarRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
 
   if (!details) return <div className="detail-loading">Caricamento…</div>;
+
+  const backdropUrl = details.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
+    : details.poster_path
+    ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
+    : backdropPlaceholder;
 
   return (
     <div className="detail-page">
       <Link to="/" className="back-btn">← Torna alla Home</Link>
 
-      <div
-        className="detail-backdrop"
-        style={{
-          backgroundImage: `url(https://image.tmdb.org/t/p/original${details.backdrop_path})`,
-        }}
-      />
+      <div className="detail-backdrop">
+        <img
+          className={`detail-backdrop-img`}
+          src={backdropUrl}
+          alt={details.title || details.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = backdropPlaceholder;
+          }}
+        />
+        <div className="backdrop-overlay" />
+      </div>
 
       <h1 className="detail-title">{details.title || details.name}</h1>
 
@@ -119,41 +155,53 @@ const handleWheel = (ref) => (event) => {
 
      
       <h2>Cast</h2>
-      <div className="detail-cast scroll-row" ref={castRef}>
-        {cast.slice(0, 20).map((actor) => (
-          <div key={actor.id} className="cast-card">
-            <img
-              src={
-                actor.profile_path
-                  ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
-                  : "https://via.placeholder.com/200x300"
-              }
-              alt={actor.name}
-            />
-            <p>{actor.name}</p>
-            <small>{actor.character}</small>
-          </div>
-        ))}
+      <div className="row-wrapper">
+        {castLeft && <button className="scroll-btn left" onClick={() => scrollCast(-1)} aria-label="Scroll cast left">‹</button>}
+        <div className="detail-cast scroll-row" ref={castRef}>
+          {cast.slice(0, 20).map((actor) => (
+            <div key={actor.id} className="cast-card">
+              <img
+                src={
+                  actor.profile_path
+                    ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
+                    : actorPlaceholder
+                }
+                alt={actor.name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = actorPlaceholder;
+                }}
+              />
+              <p>{actor.name}</p>
+              <small>{actor.character}</small>
+            </div>
+          ))}
+        </div>
+        {castRight && <button className="scroll-btn right" onClick={() => scrollCast(1)} aria-label="Scroll cast right">›</button>}
       </div>
 
     
       <h2>Simili</h2>
-      <div className="similar-list scroll-row" ref={similarRef}>
-        {similar.map((item) => (
-          <Link
-  to={`/${mediaType}/${item.id}`}
-  key={item.id}
-  className="similar-card"
-  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
->
+      <div className="row-wrapper">
+        {simLeft && <button className="scroll-btn left" onClick={() => scrollSim(-1)} aria-label="Scroll similar left">‹</button>}
+        <div className="similar-list scroll-row" ref={similarRef}>
+          {similar.map((item) => (
+            <Link
+      to={`/${mediaType}/${item.id}`}
+      key={item.id}
+      className="similar-card"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+    >
 
-            <img
-              src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-              alt=""
-            />
-            <p>{item.title || item.name}</p>
-          </Link>
-        ))}
+              <img
+                src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+                alt=""
+              />
+              <p>{item.title || item.name}</p>
+            </Link>
+          ))}
+        </div>
+        {simRight && <button className="scroll-btn right" onClick={() => scrollSim(1)} aria-label="Scroll similar right">›</button>}
       </div>
     </div>
   );
