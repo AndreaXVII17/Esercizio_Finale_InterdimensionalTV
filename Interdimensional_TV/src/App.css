@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 } */
+
+/* App layout: keep footer at bottom */
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1 0 auto;
+}
+
+/* ensure body fills viewport */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}

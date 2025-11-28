@@ -34,23 +34,23 @@ const Navbar = () => {
   return (
     <div className='navbar'>
       <div className="navbar-left">
-        <img
+          <img
           src={logo}
           alt="logo"
           className="img"
           role="button"
           tabIndex={0}
-          onClick={() => navigate('/')}
-          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
+          onClick={() => navigate('/home')}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/home'); }}
           style={{ cursor: 'pointer' }}
         />
         <ul>
-          <li onClick={() => navigate('/')} role="button">Home</li>
+          <li onClick={() => navigate('/home')} role="button">Home</li>
           <li
-            onClick={() => navigate('/series')}
+            onClick={() => navigate('/serietv')}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/series'); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate('/serietv'); }}
           >
             Serie TV
           </li>

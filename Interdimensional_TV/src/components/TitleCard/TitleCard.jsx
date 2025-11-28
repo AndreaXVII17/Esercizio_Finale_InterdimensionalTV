@@ -26,36 +26,50 @@ const options = {
 const [showLeft, setShowLeft] = useState(false);
 const [showRight, setShowRight] = useState(false);
 
-useEffect(()=>{
+// reusable updater so we can call it from different places
+const updateButtons = () => {
+  const el = cardsRef.current;
+  if (!el) return;
+  setShowLeft(el.scrollLeft > 0);
+  setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+};
 
+useEffect(()=>{
+  // fetch data when category changes
   fetch( `https://api.themoviedb.org/3/movie/${category?category:"now_playing"}?language=en-US&page=1`, options)
   .then(res => res.json())
   .then(res =>setApiData(res.results))
   .catch(err => console.error(err));
 
-  const el = cardsRef.current;
-  const updateButtons = () => {
-    if (!el) return;
-    setShowLeft(el.scrollLeft > 0);
-    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  };
+},[category])
 
-  el && el.addEventListener('scroll', updateButtons, { passive: true });
+useEffect(()=>{
+  // initialize scroll listeners and compute buttons after apiData is set
+  const el = cardsRef.current;
+
+  if (el) {
+    el.addEventListener('scroll', updateButtons, { passive: true });
+  }
   window.addEventListener('resize', updateButtons);
-  setTimeout(updateButtons, 50);
+  // allow a short delay for images to load and layout to settle
+  const t = setTimeout(updateButtons, 150);
 
   return () => {
-    el && el.removeEventListener('scroll', updateButtons);
+    if (el) el.removeEventListener('scroll', updateButtons);
     window.removeEventListener('resize', updateButtons);
+    clearTimeout(t);
   };
 
-},[category])
+},[apiData])
 
 const scrollByPage = (dir = 1) => {
   const el = cardsRef.current;
   if (!el) return;
   const amount = el.clientWidth;
   el.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  // update buttons immediately and after a short delay to catch smooth scrolling
+  updateButtons();
+  setTimeout(updateButtons, 250);
 };
 
 
