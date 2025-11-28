@@ -1,33 +1,19 @@
-import './App.css';
-import React from 'react';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import SearchResults from "./pages/SearchResults";
+import Favourites from "./pages/Favourites";  // <--- IMPORT GIUSTO
+import { FavouritesProvider } from "./context/FavouritesContext";
 
-
-// Le tue pagine
-import Home from './pages/Home/Home';
-import SearchResults from "./pages/SearchResults.jsx";
-
-
-import { Routes, Route } from 'react-router-dom';
-
-
-const App = () => {
+function App() {
   return (
-    <div>
+    <FavouritesProvider>
       <Routes>
-
-
-        {/* HOME */}
-        <Route path='/' element={<Home />} />
-
-
-        {/* PAGINA RISULTATI RICERCA */}
-        <Route path='/search' element={<SearchResults />} />
-
-
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/favourites" element={<Favourites />} />  {/* <--- QUI NON DEVE CRASHARE */}
       </Routes>
-    </div>
+    </FavouritesProvider>
   );
-};
-
+}
 
 export default App;
