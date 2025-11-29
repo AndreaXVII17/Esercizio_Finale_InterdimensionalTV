@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import play_icon from "../../assets/play_icon.png";
 import info_icon from "../../assets/info_icon.png";
+import backgroundBanner from "../../assets/background_banner.jpg";
 import "./HeroBanner.css";
 import { Link } from "react-router-dom";
 
@@ -42,7 +43,23 @@ export default function HeroBannerFoto() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!featured) return null;
+  // If featured is not yet loaded, render a visible placeholder
+  if (!featured) {
+    return (
+      <div className="hero">
+        <img
+          src={backgroundBanner}
+          alt="hero placeholder"
+          className="banner-img"
+        />
+        <div className="hero-caption">
+          <h1 className="caption-img" style={{ color: "white", fontSize: "25px", fontWeight: "700" }}>
+            Caricamento in corso...
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
