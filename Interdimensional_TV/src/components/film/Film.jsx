@@ -83,6 +83,10 @@ const MovieRow = ({ title, category }) => {
                 <img
                   src={it.backdrop_path ? 'https://image.tmdb.org/t/p/w500' + it.backdrop_path : 'https://via.placeholder.com/500x280?text=No+Image'}
                   alt={it.title}
+<<<<<<< HEAD
+=======
+                  loading="lazy"
+>>>>>>> GiraudoAndrea_modificheMain
                 />
               </Link>
 

@@ -22,11 +22,6 @@ const TitleCards = ({ title, category }) => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
-  // NOTE: wheel-based horizontal scrolling removed per UX request.
-
-  // updateButtons uses the current `cardsRef` element to decide whether
-  // to show the left/right scroll buttons. Defined here so it can be
-  // called after API data loads and from listeners.
   const updateButtons = () => {
     const el = cardsRef.current;
     if (!el) return;
@@ -35,7 +30,6 @@ const TitleCards = ({ title, category }) => {
   };
 
   useEffect(() => {
-    // Fetch API in italiano
     fetch(
       `https://api.themoviedb.org/3/movie/${category ?? "now_playing"}?language=it-IT&page=1`,
       options
@@ -46,11 +40,9 @@ const TitleCards = ({ title, category }) => {
 
     const el = cardsRef.current;
 
-    // Eventi scroll + resize
     el && el.addEventListener("scroll", updateButtons, { passive: true });
     window.addEventListener("resize", updateButtons);
 
-    // Aggiorna pulsanti dopo layout
     setTimeout(updateButtons, 50);
 
     return () => {
@@ -59,12 +51,10 @@ const TitleCards = ({ title, category }) => {
     };
   }, [category]);
 
-  // Ensure buttons are updated when cards are rendered/changed
   useEffect(() => {
     setTimeout(updateButtons, 50);
   }, [apiData]);
 
-  // Scroll orizzontale per intera "pagina"
   const scrollByPage = (dir = 1) => {
     const el = cardsRef.current;
     if (!el) return;

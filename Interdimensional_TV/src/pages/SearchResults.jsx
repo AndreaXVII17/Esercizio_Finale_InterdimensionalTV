@@ -104,7 +104,7 @@ export default function SearchResults() {
           color: "white",
         }}
       >
-        {/* BACK (solo se lo vuoi) */}
+        {/* BACK */}
         <BackButton />
 
         {/* BARRA DI RICERCA */}
@@ -169,6 +169,7 @@ export default function SearchResults() {
                     }
                     alt={movie.title}
                     style={{ width: "100%", borderRadius: "8px" }}
+                    loading="lazy"
                   />
 
                   {/* preferiti */}
@@ -224,6 +225,7 @@ export default function SearchResults() {
                     }
                     alt={tv.name}
                     style={{ width: "100%", borderRadius: "8px" }}
+                    loading="lazy"
                   />
 
                   <p style={{ textAlign: "center", marginTop: "8px" }}>

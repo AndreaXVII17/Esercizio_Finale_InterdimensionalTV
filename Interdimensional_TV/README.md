@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Netflix Clone – SPA con React & TMDB API
 
 # Autori
@@ -89,3 +90,4 @@ GET /tv/{id}/videos
 
 
 https://developer.themoviedb.org/reference/intro/getting-started
+=======

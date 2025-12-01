@@ -17,11 +17,8 @@ export default function Favourites() {
         }}
       >
 
-     
-
-      {/* Back button + 🎬 TITOLO STILE NETFLIX + contatore cuore */}
+      {/* Back button + titolo + contatore */}
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8 }}>
-       
         <h1
           style={{
             fontSize: "28px",
@@ -32,7 +29,6 @@ export default function Favourites() {
         >
           La tua lista
         </h1>
-        
 
         <div style={{ marginLeft: 8 }} />
 
@@ -52,14 +48,16 @@ export default function Favourites() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <BackButton />
           </div>
+
           <svg viewBox="0 0 24 24" width="18" height="18" style={{ fill: "black", stroke: "white", strokeWidth: 2 }}>
             <path d="M12.1 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.65 11.54l-1.25 1.31z" />
           </svg>
+          
           <span style={{ color: "white", fontWeight: 700 }}>{favourites.length}</span>
         </div>
       </div>
 
-      {/* ⭐ SOTTOTITOLO */}
+      {/* Sottotitolo */}
       <p
         style={{
           marginTop: "6px",
@@ -78,7 +76,7 @@ export default function Favourites() {
         </p>
       )}
 
-      {/* Griglia stile Netflix */}
+      {/* Griglia Netflix */}
       <div
         style={{
           display: "grid",
@@ -88,7 +86,6 @@ export default function Favourites() {
         }}
       >
         {favourites.map((item) => {
-          // determine media type: prefer explicit media_type, fallback to 'movie'
           const media = item.media_type || (item.first_air_date ? "tv" : "movie");
           const to = `/${media}/${item.id}`;
 
@@ -107,6 +104,7 @@ export default function Favourites() {
                     display: "block",
                   }}
                   alt={item.title || item.name}
+                  loading="lazy"
                 />
 
                 <p
@@ -122,7 +120,7 @@ export default function Favourites() {
                 </p>
               </Link>
 
-              {/*  bottone rimuovi */}
+              {/* bottone rimuovi */}
               <button
                 onClick={() => removeFavourite(item.id)}
                 style={{
@@ -148,6 +146,7 @@ export default function Favourites() {
           );
         })}
       </div>
+
     </div>
     </div>
   );

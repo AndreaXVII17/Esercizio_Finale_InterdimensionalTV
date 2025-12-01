@@ -34,6 +34,7 @@ export default function Detail({ mediaType }) {
 
 
   useEffect(() => {
+<<<<<<< HEAD
     async function loadAll() {
       // dettagli film
       const d = await fetch(
@@ -119,10 +120,116 @@ export default function Detail({ mediaType }) {
         }
       } catch (e) {
         console.error('Error fetching account rated lists', e);
+=======
+    // Parallelize many API calls and avoid multiple sequential awaits
+    const controller = new AbortController();
+    let mounted = true;
+
+    async function loadAll() {
+      try {
+        // fetch details first so page renders quickly
+        const dRes = await fetch(
+          `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${API_KEY}&language=it-IT`,
+          { signal: controller.signal }
+        );
+        const d = await dRes.json();
+        if (!mounted) return;
+        setDetails(d);
+
+        // parallel requests for the rest
+        const creditsP = fetch(
+          `https://api.themoviedb.org/3/${mediaType}/${id}/credits?api_key=${API_KEY}&language=it-IT`,
+          { signal: controller.signal }
+        ).then((r) => r.json()).catch(() => null);
+
+        const videosP = fetch(
+          `https://api.themoviedb.org/3/${mediaType}/${id}/videos?api_key=${API_KEY}&language=it-IT`,
+          { signal: controller.signal }
+        ).then((r) => r.json()).catch(() => null);
+
+        const similarP = fetch(
+          `https://api.themoviedb.org/3/${mediaType}/${id}/similar?api_key=${API_KEY}&language=it-IT`,
+          { signal: controller.signal }
+        ).then((r) => r.json()).catch(() => ({ results: [] }));
+
+        const ratingsP = (async () => {
+          try {
+            if (mediaType === 'tv') {
+              const cr = await fetch(
+                `https://api.themoviedb.org/3/tv/${id}/content_ratings?api_key=${API_KEY}&language=it-IT`,
+                { signal: controller.signal }
+              );
+              return (await cr.json()).results || [];
+            } else {
+              const mr = await fetch(
+                `https://api.themoviedb.org/3/movie/${id}/release_dates?api_key=${API_KEY}`,
+                { signal: controller.signal }
+              );
+              return (await mr.json()).results || [];
+            }
+          } catch (e) {
+            return null;
+          }
+        })();
+
+        const [c, v, s, r] = await Promise.all([creditsP, videosP, similarP, ratingsP]);
+        if (!mounted) return;
+
+        setCast((c && c.cast) || []);
+        const trailer = v?.results?.find((x) => x.type === 'Trailer' && x.site === 'YouTube') || null;
+        setTrailerKey(trailer ? trailer.key : null);
+        setSimilar((s && s.results) || []);
+        setRatings(r || []);
+
+        // fetch account rated lists in background (do not block initial UI)
+        (async () => {
+          try {
+            const options = {
+              method: 'GET',
+              headers: {
+                accept: 'application/json',
+                Authorization:
+                  'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YjZjNTMyZmI2NDFkNjM3NTgzZGZmNjZjNjdmMTM4NCIsIm5iZiI6MTc2Mjc4NTc4Ni44NzUsInN1YiI6IjY5MTFmOWZhZmUwOGI2NzcyNmEwY2YzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bYx1ffbNPqHam0JWdpJcYy9moHha62AY0MjVgeX5nn8'
+              }
+            };
+
+            const [rtRes, rmRes] = await Promise.all([
+              fetch('https://api.themoviedb.org/3/account/22458540/rated/tv?language=en-US&page=1&sort_by=created_at.asc', options).then(r => r.json()).catch(() => ({ results: [] })),
+              fetch('https://api.themoviedb.org/3/account/22458540/rated/movies?language=en-US&page=1&sort_by=created_at.asc', options).then(r => r.json()).catch(() => ({ results: [] }))
+            ]);
+
+            if (!mounted) return;
+            setRatedTv(rtRes.results || []);
+            setRatedMovies(rmRes.results || []);
+
+            const numericId = Number(id);
+            if (mediaType === 'tv') {
+              const found = (rtRes.results || []).find((x) => Number(x.id) === numericId);
+              setUserRating(found ? found.rating : null);
+            } else {
+              const found = (rmRes.results || []).find((x) => Number(x.id) === numericId);
+              setUserRating(found ? found.rating : null);
+            }
+          } catch (e) {
+            // ignore background errors
+          }
+        })();
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+        console.error(e);
+>>>>>>> GiraudoAndrea_modificheMain
       }
     }
 
     loadAll();
+<<<<<<< HEAD
+=======
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
+>>>>>>> GiraudoAndrea_modificheMain
   }, [id, mediaType]);
 
   // manage visibility of scroll buttons for cast and similar lists
@@ -231,7 +338,11 @@ export default function Detail({ mediaType }) {
   };
 
   const backdropUrl = details.backdrop_path
+<<<<<<< HEAD
     ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
+=======
+    ? `https://image.tmdb.org/t/p/w1280${details.backdrop_path}`
+>>>>>>> GiraudoAndrea_modificheMain
     : details.poster_path
     ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
     : backdropPlaceholder;
@@ -341,6 +452,10 @@ export default function Detail({ mediaType }) {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = actorPlaceholder;
                 }}
+<<<<<<< HEAD
+=======
+                loading="lazy"
+>>>>>>> GiraudoAndrea_modificheMain
               />
               <p>{actor.name}</p>
               <small>{actor.character}</small>
@@ -366,6 +481,10 @@ export default function Detail({ mediaType }) {
               <img
                 src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
                 alt=""
+<<<<<<< HEAD
+=======
+                loading="lazy"
+>>>>>>> GiraudoAndrea_modificheMain
               />
               <p>{item.title || item.name}</p>
             </Link>

@@ -22,6 +22,7 @@ export default function Favorites() {
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
                 alt={movie.title}
+                loading="lazy"
               />
               <p>{movie.title || movie.name}</p>
             </Link>
