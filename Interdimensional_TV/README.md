@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 Netflix Clone – SPA con React & TMDB API
 
 # Autori
@@ -53,7 +53,7 @@ npm install
 
 Nella root del progetto aggiungi:
 
-VITE_TMDB_API_KEY=dd553efec074c8bcdc6c1e02f86ce805
+VITE_TMDB_API_KEY= la tua chiave 
 VITE_TMDB_BASE_URL=https://api.themoviedb.org/3
 
  4. Avvia il server di sviluppo
